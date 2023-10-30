@@ -4,8 +4,12 @@
  */
 package Layouts;
 
+import static Layouts.Sistema.dni;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import propio.DNICryptographer;
 
 /**
  *
@@ -13,10 +17,12 @@ import javax.swing.JOptionPane;
  */
 public class Inicio extends javax.swing.JFrame {
 
-    String user = "root";
-    String password = "password";
-    String nombreSys;
-    String apellidoSys;
+    private String user = "root";
+    private String password = "password";
+    private String nombreSys;
+    private String apellidoSys;
+    public static String encriyptedDNI;
+    private int cedula;
 
     /**
      * Creates new form Inicio
@@ -25,7 +31,7 @@ public class Inicio extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setTitle("BOGOTÁ ELIGE");
-        //this.setContentPane(jPanel1);
+        //this.cedula = Integer.parseInt(this.txtCedula.getText().trim());
 
     }
 
@@ -51,6 +57,8 @@ public class Inicio extends javax.swing.JFrame {
         btnLimpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(505, 345));
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("ELECCIONES ALCALDÍA DE BOGOTÁ 2023");
@@ -124,7 +132,7 @@ public class Inicio extends javax.swing.JFrame {
                                 .addComponent(btnLimpiar)
                                 .addGap(67, 67, 67)
                                 .addComponent(btnAvanzar)))))
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -157,69 +165,107 @@ public class Inicio extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnValidarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValidarActionPerformed
-        try {
-            int cedula = Integer.parseInt(txtCedula.getText().trim());
-            String nombre = txtNombre.getText().trim();
-            String apellido = txtApellido.getText().trim();
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password);
-            PreparedStatement pst = con.prepareStatement("SELECT * FROM votantes WHERE cedula = ?");
-            pst.setInt(1, cedula);
+        cedula = Integer.parseInt(txtCedula.getText().trim());
+        //System.out.println(cedula);
+        //boolean participacion = validarParticipacion(cedula);
+        //System.out.println(participacion);
+        if (validarParticipacion(cedula)) {
+            try {
+                String nombre = txtNombre.getText().trim();
+                String apellido = txtApellido.getText().trim();
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password);
+                PreparedStatement pst = con.prepareStatement("SELECT * FROM votantes WHERE cedula = ?");
+                pst.setInt(1, cedula);
 
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                nombreSys = rs.getString("pNombre");
-                apellidoSys = rs.getString("pApellido");
-                if (nombre.equalsIgnoreCase(nombreSys) && apellido.equalsIgnoreCase(apellidoSys)) {
-                    JOptionPane.showMessageDialog(null, "Adelante, presiona avanzar");
-                    txtNombre.setEnabled(false);
-                    txtApellido.setEnabled(false);
-                    txtCedula.setEnabled(false);
-                    btnAvanzar.setEnabled(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Datos erróneos");
-                    txtNombre.requestFocus();
-                    txtApellido.requestFocus();
-                    txtCedula.requestFocus();
+                ResultSet rs = pst.executeQuery();
+                while (rs.next()) {
+                    nombreSys = rs.getString("pNombre");
+                    apellidoSys = rs.getString("pApellido");
+                    if (nombre.equalsIgnoreCase(nombreSys) && apellido.equalsIgnoreCase(apellidoSys)) {
+                        JOptionPane.showMessageDialog(null, "Adelante, presiona avanzar");
+                        txtNombre.setEnabled(false);
+                        txtApellido.setEnabled(false);
+                        txtCedula.setEnabled(false);
+                        btnAvanzar.setEnabled(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Datos erróneos");
+                        txtNombre.requestFocus();
+                        txtApellido.requestFocus();
+                        txtCedula.requestFocus();
+                    }
                 }
-            }
 
-        } catch (Exception e) {
-            System.out.println(e);
-            JOptionPane.showMessageDialog(null, "Datos incompletos");
+            } catch (SQLException e) {
+                System.out.println(e);
+                JOptionPane.showMessageDialog(null, "Datos incompletos");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Ya votaste");
+            limpiar();
+
         }
     }//GEN-LAST:event_btnValidarActionPerformed
 
+    public boolean validarParticipacion(int cd) {
+        boolean pt = false;
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password);
+            PreparedStatement pst = con.prepareStatement("select participacion from votantes where cedula = ?");
+
+            pst.setInt(1, cd);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                int participacion = rs.getInt("participacion");
+                pt = participacion != 1; // Asumiendo que 1 significa que el votante ya participó, y 0 significa que no lo hizo.
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return pt;
+    }
+
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        limpiar();
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    public void limpiar() {
         txtNombre.setText("");
         txtApellido.setText("");
         txtCedula.setText("");
         txtNombre.setEnabled(true);
         txtApellido.setEnabled(true);
         txtCedula.setEnabled(true);
-    }//GEN-LAST:event_btnLimpiarActionPerformed
+    }
 
     private void btnAvanzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvanzarActionPerformed
         Sistema sistema = new Sistema();
-        sistema.cedula = Integer.parseInt(txtCedula.getText().trim());
-        sistema.setVisible(true);
-        this.setVisible(false);
+        String dni = txtCedula.getText().trim();
+        try {
+            encriyptedDNI = DNICryptographer.encryptDNI(dni);
+            Sistema.dni = encriyptedDNI;
+            sistema.setVisible(true);
+            this.setVisible(false);
+        } catch (Exception ex) {
+            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_btnAvanzarActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -244,6 +290,7 @@ public class Inicio extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        DNICryptographer.initializeSecretKey();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Inicio().setVisible(true);
@@ -261,7 +308,7 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     public static javax.swing.JTextField txtApellido;
-    public static javax.swing.JTextField txtCedula;
+    private javax.swing.JTextField txtCedula;
     public static javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 }

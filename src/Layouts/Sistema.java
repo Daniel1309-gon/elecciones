@@ -4,7 +4,13 @@
  */
 package Layouts;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.crypto.*;
+import propio.DNICryptographer;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,12 +21,17 @@ public class Sistema extends javax.swing.JFrame {
     /**
      * Creates new form Sistema
      */
-    
-    public static int cedula;
+    private String user = "root";
+    private String password = "password";
+    public static String dni;
+    private int cedula;
+
     public Sistema() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setTitle("BOGOTÁ ELIGE");
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -30,136 +41,141 @@ public class Sistema extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        btnBolivar = new javax.swing.JButton();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
         btnGalan = new javax.swing.JButton();
+        btnBolivar = new javax.swing.JButton();
         btnOviedo = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnBolivar.setLabel("BOLIVAR");
-        btnBolivar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBolivarActionPerformed(evt);
-            }
-        });
-
-        btnGalan.setLabel("GALÁN");
+        btnGalan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/galan.jpeg"))); // NOI18N
         btnGalan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGalanActionPerformed(evt);
             }
         });
 
-        btnOviedo.setLabel("OVIEDO");
+        btnBolivar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/bolivar.jpg"))); // NOI18N
+        btnBolivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBolivarActionPerformed(evt);
+            }
+        });
+
+        btnOviedo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/oviedo (2).jpg"))); // NOI18N
         btnOviedo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOviedoActionPerformed(evt);
             }
         });
 
-        jLabel3.setText("jLabel3");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(64, 64, 64)
-                .addComponent(btnBolivar)
-                .addGap(85, 85, 85)
-                .addComponent(btnGalan)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE)
-                .addComponent(btnOviedo)
-                .addGap(55, 55, 55))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(142, 142, 142)
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addComponent(btnOviedo, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53)
+                .addComponent(btnGalan, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53)
+                .addComponent(btnBolivar, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(53, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(113, 113, 113)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnBolivar)
-                    .addComponent(btnGalan)
-                    .addComponent(btnOviedo))
-                .addGap(64, 64, 64)
-                .addComponent(jLabel3)
-                .addContainerGap(98, Short.MAX_VALUE))
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(112, 112, 112)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnOviedo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGalan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnBolivar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(112, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("INICIO", jPanel1);
+        jTabbedPane2.addTab("INICIO", jPanel3);
 
-        jLabel1.setText("Proyecto realizado por Daniel González");
-
-        jLabel2.setText("Redes de computadores 2023-2");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(157, 157, 157)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel2))
-                    .addComponent(jLabel1))
-                .addContainerGap(179, Short.MAX_VALUE))
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1046, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(125, 125, 125)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addContainerGap(145, Short.MAX_VALUE))
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 569, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("MÁS", jPanel2);
+        jTabbedPane2.addTab("tab2", jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jTabbedPane2)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBolivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBolivarActionPerformed
-        System.out.println(cedula);
-    }//GEN-LAST:event_btnBolivarActionPerformed
+    private void btnOviedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOviedoActionPerformed
+        votar("OVIEDO");
+    }//GEN-LAST:event_btnOviedoActionPerformed
 
     private void btnGalanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGalanActionPerformed
-        // TODO add your handling code here:
+        votar("GALAN");
     }//GEN-LAST:event_btnGalanActionPerformed
 
-    private void btnOviedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOviedoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnOviedoActionPerformed
+    private void btnBolivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBolivarActionPerformed
+        votar("BOLIVAR");
+    }//GEN-LAST:event_btnBolivarActionPerformed
+
+    public void actualizarParticipacion() {
+        try {
+            cedula = Integer.parseInt(DNICryptographer.decryptDNI(dni));
+            //System.out.println(cedula);
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password);
+            PreparedStatement pst2 = con.prepareStatement("UPDATE votantes SET participacion = ? WHERE cedula = ?");
+            pst2.setInt(1, 1);
+            pst2.setInt(2, cedula);
+            pst2.executeUpdate();
+            con.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void votar(String candidato) {
+        int answ = JOptionPane.showConfirmDialog(null, "¿Confirma el voto por el candidato OVIEDO?");
+        if (answ == JOptionPane.YES_OPTION) {
+            try {
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password);
+                PreparedStatement pst = con.prepareStatement("INSERT INTO votos VALUES (?,?)");
+
+                pst.setString(1, dni);
+                pst.setString(2, candidato);
+
+                pst.executeUpdate();
+                actualizarParticipacion();
+                con.close();
+
+            } catch (Exception ex) {
+                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.exit(0);
+        }
+    }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -184,6 +200,7 @@ public class Sistema extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        DNICryptographer.initializeSecretKey();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Sistema().setVisible(true);
@@ -195,11 +212,8 @@ public class Sistema extends javax.swing.JFrame {
     private javax.swing.JButton btnBolivar;
     private javax.swing.JButton btnGalan;
     private javax.swing.JButton btnOviedo;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    public static javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JTabbedPane jTabbedPane2;
     // End of variables declaration//GEN-END:variables
 }
