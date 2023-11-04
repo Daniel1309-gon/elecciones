@@ -4,6 +4,7 @@
  */
 package propio;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +14,18 @@ import java.util.List;
  */
 public class Cadena {
 
+    private final String user = "root";
+    private final String password = "password";
+    private final String url = "jdbc:mysql://localhost/elecciones";
+    private final Connection con;
+
     private List<Bloque> cadena;
 
-    public Cadena() {
+    public Cadena() throws SQLException {
         cadena = new ArrayList<>();
-        Bloque genesis = new Bloque(0, "genesis", 0, "voto genesis", "0");
+        Bloque genesis = new Bloque(0, "genesis", "", "voto genesis", "0");
         cadena.add(genesis);
+        this.con = DriverManager.getConnection(url, user, password);
     }
 
     public Bloque getBlock(int index) {
@@ -28,20 +35,65 @@ public class Cadena {
         return null;
 
     }
-    
-    public Bloque getLatestBlock() {
-        return cadena.get(cadena.size() - 1);
+
+    public int getLatestBlockIndex() {
+        int index = 0;
+        try {
+            PreparedStatement pst = con.prepareStatement("SELECT * FROM cadena ORDER BY indice DESC LIMIT 1");
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                index = rs.getInt("indice");
+            } else {
+                index = 0;
+            }
+            con.close();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return index;
     }
-    
-    public Bloque addBlock(String nombre, int cedula, String voto) {
-        Bloque previousBlock = getLatestBlock();
-        int newIndex = previousBlock.getIndex() + 1;
-        String previousHash = previousBlock.getHash();
+
+    public String getLatestBlockHash() {
+        String hash = "";
+        try {
+            PreparedStatement pst = con.prepareStatement("SELECT * FROM cadena ORDER BY indice DESC LIMIT 1");
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                hash = rs.getString("hash");
+            } else {
+                hash = "";
+            }
+            con.close();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return hash;
+    }
+
+    public void addBlock(String nombre, String cedula, String voto) {
+        int newIndex = getLatestBlockIndex();
+        String previousHash = getLatestBlockHash();
         Bloque newBlock = new Bloque(newIndex, nombre, cedula, voto, previousHash);
-        cadena.add(newBlock);
-        return newBlock;
+        long tiempo = newBlock.getTime();
+        String hash = newBlock.getHash();
+        //cadena.add(newBlock);
+        try {
+            PreparedStatement pst = con.prepareStatement("INSERT INTO cadena (nombre, cedula, tiempo, voto, hash, hashPrevio) VALUES (?,?,?,?,?,?)");
+            pst.setString(1, nombre);
+            pst.setString(2, cedula);
+            pst.setLong(3, tiempo);
+            pst.setString(4, voto);
+            pst.setString(5, hash);
+            pst.setString(6, previousHash);
+            
+            pst.executeUpdate();
+            
+        } catch (SQLException e) {
+        }
     }
-    
+
     public boolean isChainValid() {
         for (int i = 1; i < cadena.size(); i++) {
             Bloque currentBlock = cadena.get(i);
@@ -57,8 +109,8 @@ public class Cadena {
         }
         return true;
     }
-    
-    public int getSize(){
-        return cadena.size()-1;
+
+    public int getSize() {
+        return cadena.size() - 1;
     }
 }

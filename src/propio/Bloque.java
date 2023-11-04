@@ -15,14 +15,14 @@ import java.util.Date;
 public class Bloque {
     private int index;
     private String nombre;
-    private int cedula;
+    private String cedula;
     private long time;
     private String voto;
     
     private String hash;
     private String previousHash;
 
-    public Bloque(int index, String nombre, int cedula, String voto, String previousHash) {
+    public Bloque(int index, String nombre, String cedula, String voto, String previousHash) {
         this.index = index;
         this.nombre = nombre;
         this.cedula = cedula;
@@ -67,11 +67,11 @@ public class Bloque {
         this.nombre = nombre;
     }
 
-    public int getCedula() {
+    public String getCedula() {
         return cedula;
     }
 
-    public void setCedula(int cedula) {
+    public void setCedula(String cedula) {
         this.cedula = cedula;
     }
 

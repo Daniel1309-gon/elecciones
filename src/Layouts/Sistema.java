@@ -4,13 +4,20 @@
  */
 package Layouts;
 
-import javax.swing.ImageIcon;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.swing.JOptionPane;
-import javax.crypto.*;
 import propio.DNICryptographer;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import propio.Bloque;
+import propio.ControBC;
+import static propio.ControBC.getLatestBlockHash;
+import static propio.ControBC.getLatestBlockIndex;
+import javax.swing.*;
 
 /**
  *
@@ -21,15 +28,19 @@ public class Sistema extends javax.swing.JFrame {
     /**
      * Creates new form Sistema
      */
-    private String user = "root";
-    private String password = "password";
+    private final String user = "root";
+    private final String password = "password";
     public static String dni;
     private int cedula;
+    private String nombre = Inicio.nombreCompleto;
 
     public Sistema() {
         initComponents();
-        this.setLocationRelativeTo(null);
-        this.setTitle("BOGOTÁ ELIGE");
+        setLocationRelativeTo(null);
+        setTitle("BOGOTÁ ELIGE");
+        System.out.println(Inicio.nombreCompleto);
+        setResizable(false);
+
     }
 
     /**
@@ -46,11 +57,26 @@ public class Sistema extends javax.swing.JFrame {
         btnGalan = new javax.swing.JButton();
         btnBolivar = new javax.swing.JButton();
         btnOviedo = new javax.swing.JButton();
+        btnResultados1 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel2 = new javax.swing.JLabel();
+        jLabel2.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel3 = new javax.swing.JLabel();
+        jLabel3.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel4 = new javax.swing.JLabel();
+        jLabel4.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(700, 500));
+
+        jTabbedPane2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTabbedPane2.setMaximumSize(new java.awt.Dimension(600, 400));
 
         btnGalan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/galan.jpeg"))); // NOI18N
+        btnGalan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnGalan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGalanActionPerformed(evt);
@@ -58,6 +84,7 @@ public class Sistema extends javax.swing.JFrame {
         });
 
         btnBolivar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/bolivar.jpg"))); // NOI18N
+        btnBolivar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnBolivar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBolivarActionPerformed(evt);
@@ -65,9 +92,19 @@ public class Sistema extends javax.swing.JFrame {
         });
 
         btnOviedo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/oviedo (2).jpg"))); // NOI18N
+        btnOviedo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnOviedo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOviedoActionPerformed(evt);
+            }
+        });
+
+        btnResultados1.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
+        btnResultados1.setText("Salir");
+        btnResultados1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnResultados1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResultados1ActionPerformed(evt);
             }
         });
 
@@ -76,49 +113,120 @@ public class Sistema extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addComponent(btnOviedo, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addGap(53, 53, 53)
-                .addComponent(btnOviedo, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnGalan, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addGap(53, 53, 53)
-                .addComponent(btnGalan, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(53, 53, 53)
-                .addComponent(btnBolivar, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addComponent(btnBolivar, javax.swing.GroupLayout.PREFERRED_SIZE, 278, Short.MAX_VALUE)
+                .addGap(52, 52, 52))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnResultados1)
+                .addGap(14, 14, 14))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(112, 112, 112)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnOviedo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnGalan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnBolivar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addGap(47, 47, 47)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnBolivar)
+                    .addComponent(btnGalan)
+                    .addComponent(btnOviedo))
+                .addGap(18, 18, 18)
+                .addComponent(btnResultados1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jTabbedPane2.addTab("INICIO", jPanel3);
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Redes de Computadores");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 3, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 102, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/github.png"))); // NOI18N
+        jLabel2.setText("https://github.com/Daniel1309-gon/elecciones");
+        jLabel2.setToolTipText("Visita el repositorio");
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel2MousePressed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Daniel Alejandro González Calderón");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("Facultad de Ingeniería");
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Universidad Nacional de Colombia");
+        jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1046, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(296, 296, 296)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addGap(72, 72, 72)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(368, 368, 368))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(296, 296, 296))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addGap(127, 127, 127)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(423, 423, 423))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addGap(86, 86, 86)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(382, 382, 382))))))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(427, 427, 427)
+                .addComponent(jLabel1)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 569, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(48, 48, 48)
+                .addComponent(jLabel1)
+                .addGap(47, 47, 47)
+                .addComponent(jLabel3)
+                .addGap(44, 44, 44)
+                .addComponent(jLabel2)
+                .addGap(48, 48, 48)
+                .addComponent(jLabel4)
+                .addGap(48, 48, 48)
+                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(48, 48, 48))
         );
 
-        jTabbedPane2.addTab("tab2", jPanel4);
+        jTabbedPane2.addTab("MÁS", jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -134,13 +242,23 @@ public class Sistema extends javax.swing.JFrame {
 
     private void btnBolivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBolivarActionPerformed
         votar("BOLIVAR");
+        System.out.println(evt);
     }//GEN-LAST:event_btnBolivarActionPerformed
 
+    private void jLabel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MousePressed
+        abrirEnlace("https://github.com/Daniel1309-gon/elecciones");
+    }//GEN-LAST:event_jLabel2MousePressed
+
+    private void btnResultados1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResultados1ActionPerformed
+        Inicio inicio = new Inicio();
+        this.setVisible(false);
+        inicio.setVisible(true);
+    }//GEN-LAST:event_btnResultados1ActionPerformed
+
     public void actualizarParticipacion() {
-        try {
+        try ( Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password)) {
             cedula = Integer.parseInt(DNICryptographer.decryptDNI(dni));
             //System.out.println(cedula);
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password);
             PreparedStatement pst2 = con.prepareStatement("UPDATE votantes SET participacion = ? WHERE cedula = ?");
             pst2.setInt(1, 1);
             pst2.setInt(2, cedula);
@@ -152,28 +270,53 @@ public class Sistema extends javax.swing.JFrame {
     }
 
     public void votar(String candidato) {
-        int answ = JOptionPane.showConfirmDialog(null, "¿Confirma el voto por el candidato OVIEDO?");
+        int answ = JOptionPane.showConfirmDialog(null, "¿Confirma el voto por el candidato " + candidato + " ?");
         if (answ == JOptionPane.YES_OPTION) {
-            try {
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password);
+            try ( Connection con = DriverManager.getConnection("jdbc:mysql://localhost/elecciones", user, password)) {
                 PreparedStatement pst = con.prepareStatement("INSERT INTO votos VALUES (?,?)");
-
                 pst.setString(1, dni);
                 pst.setString(2, candidato);
 
                 pst.executeUpdate();
                 actualizarParticipacion();
-                con.close();
+                //ControBC.addBlock(nombre, dni,candidato);
 
-            } catch (Exception ex) {
+                int newIndex = getLatestBlockIndex();
+                String previousHash = getLatestBlockHash();
+                Bloque newBlock = new Bloque(newIndex, nombre, dni, candidato, previousHash);
+                long tiempo = newBlock.getTime();
+                String hash = newBlock.getHash();
+                PreparedStatement pst2 = con.prepareStatement("INSERT INTO cadena (nombre, cedula, tiempo, voto, hash, hashPrevio) VALUES (?,?,?,?,?,?)");
+                pst2.setString(1, nombre);
+                pst2.setString(2, dni);
+                pst2.setLong(3, tiempo);
+                pst2.setString(4, candidato);
+                pst2.setString(5, hash);
+                pst2.setString(6, previousHash);
+
+                pst2.executeUpdate();
+                con.close();
+            } catch (SQLException ex) {
                 Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.exit(0);
+            Inicio inicio = new Inicio();
+            JOptionPane.showMessageDialog(null, "Gracias por participar");
+            this.setVisible(false);
+            inicio.setVisible(true);
+        }
+    }
+
+    private void abrirEnlace(String link) {
+        try {
+            Desktop.getDesktop().browse(new URI(link));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
         }
     }
 
     /**
      * @param args the command line arguments
+     * @throws java.lang.Exception
      */
     public static void main(String args[]) throws Exception {
         /* Set the Nimbus look and feel */
@@ -202,6 +345,7 @@ public class Sistema extends javax.swing.JFrame {
         /* Create and display the form */
         DNICryptographer.initializeSecretKey();
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new Sistema().setVisible(true);
             }
@@ -212,8 +356,15 @@ public class Sistema extends javax.swing.JFrame {
     private javax.swing.JButton btnBolivar;
     private javax.swing.JButton btnGalan;
     private javax.swing.JButton btnOviedo;
+    private javax.swing.JButton btnResultados1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JTabbedPane jTabbedPane2;
     // End of variables declaration//GEN-END:variables
+
 }
