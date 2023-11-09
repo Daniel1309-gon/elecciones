@@ -398,6 +398,8 @@ public class Inicio extends javax.swing.JFrame {
                 Resultados resultados = new Resultados();                
                 resultados.setVisible(true);
 
+            }else{
+                JOptionPane.showMessageDialog(null, "Consulta a tu asesor", "Error", JOptionPane.ERROR_MESSAGE);
             }
             // Aquí puedes comparar la contraseña ingresada
             // con alguna contraseña predefinida o realizar las acciones necesarias.

@@ -36,14 +36,4 @@ public class DNICryptographer {
         return new String(decryptedBytes);
     }
 
-    /*public static void main(String[] args) throws Exception {
-        initializeSecretKey();
-
-        String dni = "123456789"; // El DNI original
-        String encryptedDNI = encryptDNI(dni);
-        System.out.println("DNI encriptado: " + encryptedDNI);
-
-        String decryptedDNI = decryptDNI(encryptedDNI);
-        System.out.println("DNI desencriptado: " + decryptedDNI);
-    }*/
 }
